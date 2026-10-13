@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bokro – skisser</title>
+  <link rel="stylesheet" href="css/felles.css">
+  <style>
+    .kort-rutenett {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .kort {
+      display: block;
+      background: #fff;
+      border-radius: 8px;
+      padding: 18px;
+      text-decoration: none;
+      border: 2px solid transparent;
+    }
+    .kort:hover { border-color: var(--blekk); }
+    .kort h2 { margin: 0 0 6px; font-size: 1.15rem; }
+    .kort p { margin: 0 0 12px; color: var(--gra); }
+    .kort img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      object-position: top;
+      border: 1px solid var(--lysgra);
+    }
+  </style>
+</head>
+<body>
+  <nav class="nettsted-meny">
+    <a class="logo" href="index.html">bokro</a>
+    <a href="index.html" aria-current="page">Oversikt</a>
+    <a href="skisser.html">Skisse A–I</a>
+    <a href="versjon1.html">Versjon 1</a>
+    <a href="versjon2.html">Versjon 2</a>
+  </nav>
+
+  <main class="innhold">
+    <h1>Bokro – reservasjon av lydbok</h1>
+    <p class="ingress">
+      Klikkbare prototyper laget fra skissene. Hver side viser skissen som en
+      telefonskjerm du kan trykke på. Situasjonen er alltid den samme: du har
+      reservert lydboken <em>Mellom trærne</em> av Ida Berg og venter i kø.
+    </p>
+
+    <div class="kort-rutenett">
+      <a class="kort" href="skisser.html">
+        <h2>Skisse A–I</h2>
+        <p>Ni ideer for hvordan ventetiden kan vises.</p>
+        <img src="bilder/oversikt-alle.png" alt="Oversikt over skisse A til I">
+      </a>
+      <a class="kort" href="versjon1.html">
+        <h2>Versjon 1</h2>
+        <p>Lys ramme, bokomslag og prosentlinje. Tre situasjoner.</p>
+        <img src="bilder/v1-normal-venting.png" alt="Versjon 1, normal venting">
+      </a>
+      <a class="kort" href="versjon2.html">
+        <h2>Versjon 2</h2>
+        <p>Høy kontrast for e-blekk, linjen er delt i fire trinn. Tre situasjoner.</p>
+        <img src="bilder/v2-normal-venting.png" alt="Versjon 2, normal venting">
+      </a>
+    </div>
+  </main>
+</body>
+</html>

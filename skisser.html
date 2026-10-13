@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bokro – skisse A–I</title>
+  <link rel="stylesheet" href="css/felles.css">
+  <style>
+    .skisse-rutenett {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .skisse {
+      background: var(--papir);
+      border: 1px solid #d0cfca;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+    .skisse .bokstav { font-size: 0.75rem; letter-spacing: 0.1em; color: var(--gra); margin: 0; }
+    .skisse h2 { margin: 2px 0; font-size: 1.3rem; }
+    .skisse .loser { font-size: 0.8rem; color: var(--gra); margin: 0 0 12px; }
+    .skisse .telefon { max-width: 100%; border-width: 9px; border-radius: 16px; }
+    .skisse .skjerm { min-height: 470px; padding: 14px 16px; font-size: 0.85rem; }
+    .skisse ul { font-size: 0.78rem; padding-left: 18px; margin: 12px 0 0; }
+    .prov {
+      font-size: 0.8rem; margin-top: 10px; padding: 8px 10px;
+      background: #fff; border-left: 3px solid var(--blekk);
+    }
+    .prov button { margin-top: 6px; padding: 4px 10px; border: 1px solid var(--blekk); background: #fff; }
+    .prov button:hover { background: var(--blekk); color: #fff; }
+
+    .skisse .knapp-mork, .skisse .knapp-lys { padding: 8px 10px; margin-top: auto; }
+    .skisse .boktittel { font-size: 1.05rem; }
+    .bort { margin-top: auto; } /* skyver ting ned til bunnen av skjermen */
+
+    /* ---- A: Stafettlinjen ---- */
+    .stafett { list-style: none; margin: 10px 0 0; padding: 0 0 0 22px; position: relative; }
+    .stafett::before { content: ""; position: absolute; left: 6px; top: 6px; bottom: 10px; width: 2px; background: var(--blekk); }
+    .stafett li { position: relative; margin-bottom: 14px; }
+    .stafett li::before {
+      content: ""; position: absolute; left: -21px; top: 3px; width: 10px; height: 10px;
+      border: 2px solid var(--blekk); border-radius: 50%; background: var(--papir);
+    }
+    .stafett li.aktiv::before, .stafett li.ferdig::before { background: var(--blekk); }
+    .stafett li.mal::before { border-radius: 0; transform: rotate(45deg); background: var(--blekk); }
+    .stafett strong { display: block; }
+    .stafett .ruter { display: flex; gap: 2px; margin: 4px 0 2px; }
+    .stafett .ruter span { flex: 1; height: 9px; border: 1.5px solid var(--blekk); }
+    .stafett .ruter span.fylt { background: var(--blekk); }
+    .stafett .ruter.stiplet span { border-style: dashed; }
+
+    /* ---- B: Værmeldingen ---- */
+    .stolper { display: flex; align-items: flex-end; gap: 6px; height: 160px; border-bottom: 2px solid var(--blekk); margin-top: 8px; }
+    .stolpe { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; background: none; border: 0; padding: 0; }
+    .stolpe .verdi { font-size: 0.7rem; }
+    .stolpe .soyle { width: 100%; background: var(--blekk); }
+    .stolpe.valgt .soyle { background: repeating-linear-gradient(-45deg, var(--blekk) 0 3px, #777 3px 6px); }
+    .dager { display: flex; gap: 6px; }
+    .dager span { flex: 1; text-align: center; font-size: 0.72rem; }
+
+    /* ---- C: Prikkdiagram ---- */
+    .prikker { position: relative; height: 70px; border-bottom: 1.5px solid var(--blekk); margin: 6px 0 4px; }
+    .prikk {
+      position: absolute; width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid var(--blekk); padding: 0; transform: translateX(-50%);
+    }
+    .prikk.fylt { background: var(--blekk); }
+    .prikk.hul { background: var(--papir); }
+    .prikk.valgt { outline: 3px solid #888; outline-offset: 1px; }
+    .akse { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--gra); }
+
+    /* ---- D: Begynn mens du venter ---- */
+    .ramme { border: 2px solid var(--blekk); padding: 10px 12px; margin: 10px 0; }
+    .spill { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; margin-top: 8px; }
+    .spill .sirkel { width: 32px; height: 32px; border: 2px solid var(--blekk); border-radius: 50%; display: grid; place-items: center; }
+    .lydlinje { height: 4px; background: var(--lysgra); margin-top: 8px; }
+    .lydlinje div { height: 100%; width: 0; background: var(--blekk); }
+    .annen-bok { display: flex; gap: 10px; }
+    .annen-bok .mini-omslag { width: 54px; height: 76px; border: 1.5px solid var(--blekk); font-family: var(--serif); font-size: 0.6rem; padding: 3px; }
+
+    /* ---- E: Nummerlappen ---- */
+    .nummer { border: 2px solid var(--blekk); text-align: center; padding: 8px 0 4px; }
+    .nummer.tykk { border-width: 3px; }
+    .nummer small { font-size: 0.65rem; letter-spacing: 0.08em; color: var(--gra); }
+    .nummer .tall { font-size: 2.8rem; font-weight: bold; line-height: 1.1; }
+    .piler { text-align: center; font-size: 1.2rem; margin: 2px 0; }
+
+    /* ---- F: Hendelsesloggen ---- */
+    .logg { border-left: 2px solid var(--blekk); margin: 8px 0 0 4px; padding-left: 10px; }
+    .hendelse { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 6px 4px; margin-bottom: 4px; }
+    .hendelse.apen { border: 2px solid var(--blekk); padding: 6px 8px; }
+    .hendelse .detalj { display: none; }
+    .hendelse.apen .detalj { display: block; }
+
+    /* ---- G: Regler for fornyelse ---- */
+    .faner { display: flex; gap: 4px; margin: 8px 0; }
+    .faner button { flex: 1; padding: 4px; border: 1.5px solid var(--blekk); background: #fff; font-size: 0.75rem; }
+    .faner button[aria-pressed="true"] { background: var(--blekk); color: #fff; }
+    .variant { border: 2px solid var(--blekk); padding: 8px 10px; margin-bottom: 8px; }
+    .variant small { display: block; font-size: 0.65rem; letter-spacing: 0.05em; color: var(--gra); }
+    .variant.skravert { border: 6px solid transparent; background:
+      linear-gradient(var(--papir), var(--papir)) padding-box,
+      repeating-linear-gradient(-45deg, var(--blekk) 0 2px, var(--papir) 2px 6px) border-box; }
+
+    /* ---- H: Status på hvileskjermen ---- */
+    .hvile { text-align: center; cursor: pointer; justify-content: space-between; }
+    .hvile .stort-omslag { width: 110px; height: 150px; border: 2px solid var(--blekk); margin: 0 auto; display: grid; place-items: center; font-family: var(--serif); font-size: 1rem; }
+    .hvile .ruter { display: flex; gap: 3px; justify-content: center; margin: 6px 0 2px; }
+    .hvile .ruter span { width: 34px; height: 9px; border: 1.5px solid var(--blekk); }
+    .hvile .ruter span.fylt { background: var(--blekk); }
+
+    /* ---- I: Tempo i stedet for tall ---- */
+    .tempo { display: flex; gap: 4px; margin: 6px 0 4px; }
+    .tempo button { flex: 1; padding: 6px; border: 1.5px solid var(--blekk); background: #fff; font-size: 0.78rem; }
+    .tempo button[aria-pressed="true"] { background: var(--blekk); color: #fff; }
+    .stiplet-boks { border: 2px dashed var(--blekk); padding: 8px 10px; margin-top: 12px; font-size: 0.8rem; }
+    .stiplet-linje { border: 0; border-top: 1.5px dashed var(--linje); margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <nav class="nettsted-meny">
+    <a class="logo" href="index.html">bokro</a>
+    <a href="index.html">Oversikt</a>
+    <a href="skisser.html" aria-current="page">Skisse A–I</a>
+    <a href="versjon1.html">Versjon 1</a>
+    <a href="versjon2.html">Versjon 2</a>
+  </nav>
+
+  <main class="innhold">
+    <h1>Skisse A–I</h1>
+    <p class="ingress">Ni ideer for å vise ventetid. Hver skisse kan brukes: trykk på knapper,
+      stolper og prikker. Boksen «Prøv» under telefonen forteller hva som skjer.</p>
+
+    <div class="skisse-rutenett">
+
+      <!-- ===================== A ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE A</p>
+        <h2>Stafettlinjen</h2>
+        <p class="loser">Løser: 2 lesehest/pendler · 5 nr. 3 i køen</p>
+        <div class="telefon">
+          <div class="skjerm">
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="boktittel">Mellom trærne</p>
+            <p class="liten">Ida Berg · lydbok</p>
+            <p style="margin:8px 0 0" id="a-status"></p>
+            <ol class="stafett" id="a-etapper"></ol>
+            <button class="knapp-mork" id="a-varsle">Varsle meg <span>›</span></button>
+          </div>
+        </div>
+        <div class="prov">Prøv: la tiden gå og se stafetten gå videre.<br>
+          <button id="a-dag">+1 dag</button> <button id="a-nullstill">Start på nytt</button></div>
+        <ul>
+          <li>Heltrukket = ekte fremdrift, stiplet = bare anslag</li>
+          <li>Ingen navn, bare «etapper»</li>
+          <li>Spørsmål: Hva med flere eksemplarer samtidig?</li>
+        </ul>
+      </section>
+
+      <!-- ===================== B ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE B</p>
+        <h2>Værmeldingen</h2>
+        <p class="loser">Løser: 6 usikkerhet · 7 e-blekk</p>
+        <div class="telefon">
+          <div class="skjerm">
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="boktittel">Mellom trærne</p>
+            <p class="liten">Ida Berg · lydbok · nr. 3 i køen</p>
+            <p style="margin:10px 0 0">Sjanse for at boken er din</p>
+            <p class="liten">som nedbør på yr</p>
+            <div class="stolper" id="b-stolper"></div>
+            <div class="dager" id="b-dager"></div>
+            <hr class="stiplet-linje">
+            <p style="margin:0" id="b-tekst">Mest sannsynlig: <strong>lørdag–søndag</strong></p>
+            <p class="liten">Oppdateres én gang om dagen, kl. 07</p>
+            <p class="liten" id="b-hvorfor-tekst" hidden style="margin-top:8px">
+              Vi vet ikke nøyaktig når låneren blir ferdig. Derfor viser vi sjansen for
+              hver dag, akkurat som en værmelding viser sjansen for regn.</p>
+            <button class="knapp-lys bort" id="b-hvorfor">Hvorfor usikkert? <span>›</span></button>
+          </div>
+        </div>
+        <div class="prov">Prøv: trykk på en stolpe for å se sjansen den dagen.</div>
+        <ul>
+          <li>Kjent mental modell (yr.no)</li>
+          <li>Stolpene står stille, så det blir få skjermoppdateringer</li>
+          <li>Spørsmål: Forstår folk prosent som «sjanse»?</li>
+        </ul>
+      </section>
+
+      <!-- ===================== C ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE C</p>
+        <h2>Prikkdiagram</h2>
+        <p class="loser">Løser: 6 usikkerhet · 7 gråtoner</p>
+        <div class="telefon">
+          <div class="skjerm">
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="boktittel">Mellom trærne</p>
+            <p class="liten">Ida Berg · lydbok · nr. 3 i køen</p>
+            <p style="margin:8px 0 0">Hver prikk = 1 av 10 mulige utfall</p>
+            <p class="liten" style="margin-top:8px">Sikkert anslag</p>
+            <div class="prikker" id="c-sikker"></div>
+            <p class="liten" style="margin-top:12px">Usikkert anslag (låneren har ikke lyttet på 4 dager)</p>
+            <div class="prikker" id="c-usikker"></div>
+            <div class="akse"><span>1 d</span><span>7 d</span><span>14 d</span><span>21 d</span></div>
+            <hr class="stiplet-linje">
+            <p style="margin:0" id="c-tekst">Trolig om <strong>8–21 dager</strong></p>
+          </div>
+        </div>
+        <div class="prov">Prøv: trykk på en prikk for å se det ene utfallet.</div>
+        <ul>
+          <li>Inspirert av «When(ish) is My Bus?» (Kay mfl., 2016)</li>
+          <li>Prikker samlet = sikkert, prikker spredt = usikkert</li>
+          <li>Fylte og hule prikker gir to «farger» uten farge</li>
+        </ul>
+      </section>
+
+      <!-- ===================== D ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE D</p>
+        <h2>Begynn mens du venter</h2>
+        <p class="loser">Løser: 1 motivasjon</p>
+        <div class="telefon">
+          <div class="skjerm">
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="liten" style="border-bottom:1px dashed var(--linje); padding-bottom:6px">Mellom trærne · nr. 3 · ca. 8–14 dager</p>
+            <div class="ramme">
+              <p class="liten">MENS DU VENTER</p>
+              <p class="boktittel" style="font-size:1.2rem">Hør kapittel 1 nå</p>
+              <p class="liten" id="d-tid">12 minutter · gratis smakebit</p>
+              <button class="spill" id="d-spill"><span class="sirkel" id="d-ikon">▶</span><span id="d-knappetekst">Spill av</span></button>
+              <div class="lydlinje"><div id="d-linje"></div></div>
+            </div>
+            <p style="margin:8px 0 6px">Ledig nå, av samme forfatter:</p>
+            <div class="annen-bok">
+              <div class="mini-omslag">Under isen</div>
+              <div>
+                <p style="margin:0">Under isen</p>
+                <p class="liten">Ida Berg · ingen kø</p>
+                <button class="knapp-lys" id="d-lan" style="margin-top:6px; width:auto">Lån nå</button>
+              </div>
+            </div>
+            <p class="liten bort">Du mister ikke plassen i køen.</p>
+          </div>
+        </div>
+        <div class="prov">Prøv: spill av smakebiten (går fort i prototypen), eller lån den andre boken.</div>
+        <ul>
+          <li>Maister: venting før noe har startet føles lengre enn venting etter</li>
+          <li>Status står øverst og tar lite plass</li>
+          <li>Spørsmål: Vil biblioteket/forlaget tillate smakebiter?</li>
+        </ul>
+      </section>
+
+      <!-- ===================== E ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE E</p>
+        <h2>Nummerlappen</h2>
+        <p class="loser">Løser: 1 motivasjon · 5 nr. 3 i køen</p>
+        <div class="telefon">
+          <div class="skjerm">
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="boktittel">Mellom trærne</p>
+            <p class="liten" style="margin-bottom:10px">Ida Berg · lydbok</p>
+            <div class="nummer"><small>NÅ LÅNES</small><div class="tall" id="e-na">#41</div></div>
+            <div class="piler">↓ ↓</div>
+            <div class="nummer tykk"><small>DITT NUMMER</small><div class="tall">#43</div></div>
+            <p style="text-align:center; margin:10px 0" id="e-tekst">2 foran deg · ca. 8–14 dager</p>
+            <button class="knapp-mork bort" id="e-varsle">Varsle meg <span>›</span></button>
+          </div>
+        </div>
+        <div class="prov">Prøv: la neste låner få boken.<br>
+          <button id="e-neste">Neste nummer</button> <button id="e-nullstill">Start på nytt</button></div>
+        <ul>
+          <li>Metaforen fra apoteket og posten</li>
+          <li>Store tall som kan leses på avstand og i dårlig lys</li>
+          <li>Svakhet: viser ikke fremdriften inne i boken</li>
+        </ul>
+      </section>
+
+      <!-- ===================== F ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE F</p>
+        <h2>Hendelsesloggen</h2>
+        <p class="loser">Løser: 4 fornyelse i siste liten · 6 usikkerhet</p>
+        <div class="telefon">
+          <div class="skjerm">
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="boktittel">Mellom trærne</p>
+            <p class="liten">Ida Berg · nr. 1 i køen</p>
+            <p style="margin:6px 0; font-size:1rem">Anslått: <strong style="font-size:1.3rem">2–4 dager</strong></p>
+            <hr class="stiplet-linje" style="margin:4px 0 8px">
+            <strong>Hva har skjedd</strong>
+            <div class="logg" id="f-logg"></div>
+          </div>
+        </div>
+        <div class="prov">Prøv: trykk på en hendelse for å åpne eller lukke den.</div>
+        <ul>
+          <li>Inspirert av pakkesporing (FedEx «Delivery updated»)</li>
+          <li>Endringer forklares og forsvinner ikke</li>
+          <li>Maister: venting med en forklaring føles kortere</li>
+        </ul>
+      </section>
+
+      <!-- ===================== G ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE G</p>
+        <h2>Regler for fornyelse</h2>
+        <p class="loser">Løser: 4 fornyelse (i systemet, ikke i grensesnittet)</p>
+        <div class="telefon">
+          <div class="skjerm">
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="boktittel">Mellom trærne</p>
+            <p class="liten">Ida Berg · nr. 1 i køen</p>
+            <div class="faner" id="g-faner">
+              <button data-variant="alle" aria-pressed="true">Alle</button>
+              <button data-variant="1" aria-pressed="false">1</button>
+              <button data-variant="2" aria-pressed="false">2</button>
+              <button data-variant="3" aria-pressed="false">3</button>
+            </div>
+            <div class="variant" data-nr="1">
+              <small>VARIANT 1 · FORVARSEL</small>
+              Låneren kan forlenge frem til <strong>fre 18.10 kl. 12</strong>. Etter det er boken din.
+            </div>
+            <div class="variant" data-nr="2">
+              <small>VARIANT 2 · STENGT</small>
+              Forlengelse er stengt fordi du venter. <strong>Boken er din om ca. 30 min.</strong>
+            </div>
+            <div class="variant skravert" data-nr="3">
+              <small>VARIANT 3 · KOMPENSASJON</small>
+              Lånet ble forlenget. Du får <strong>+3 dager ekstra lånetid</strong> når boken blir din.
+            </div>
+          </div>
+        </div>
+        <div class="prov">Prøv: velg én variant om gangen, slik den ville sett ut i en A/B-test.</div>
+        <ul>
+          <li>Tre regler som kan drøftes i gruppen</li>
+          <li>Libby stopper fornyelse når andre står i kø, men oppgaven krever at dere håndterer fornyelse</li>
+          <li>Kan testes som A/B med brukere</li>
+        </ul>
+      </section>
+
+      <!-- ===================== H ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE H</p>
+        <h2>Status på hvileskjermen</h2>
+        <p class="loser">Løser: 7 e-blekk · 1 motivasjon</p>
+        <div class="telefon">
+          <div class="skjerm hvile" id="h-skjerm" role="button" tabindex="0" aria-label="Trykk for å låse opp">
+            <p class="liten" style="letter-spacing:0.3em">HVILEMODUS</p>
+            <div>
+              <div class="stort-omslag">Mellom<br>trærne</div>
+              <p style="font-size:1.1rem; margin:20px 0 0">Neste bok er snart din</p>
+              <p style="font-size:1.8rem; font-weight:bold; margin:4px 0">2–4 dager</p>
+              <div class="ruter"><span class="fylt"></span><span class="fylt"></span><span class="fylt"></span><span></span></div>
+              <p class="liten">Du er nr. 1 i køen</p>
+            </div>
+            <p class="liten">Oppdatert i dag kl. 07.00 · Trykk på av/på for å låse opp</p>
+          </div>
+          <div class="skjerm" id="h-apen" hidden>
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="boktittel">Mellom trærne</p>
+            <p class="liten">Ida Berg · nr. 1 i køen</p>
+            <p style="font-size:1.4rem; margin:14px 0 4px"><strong>2–4 dager</strong></p>
+            <p>Du har låst opp lesebrettet. Her ville resten av appen vært.</p>
+            <button class="knapp-lys bort" id="h-las">Lås skjermen igjen <span>›</span></button>
+          </div>
+        </div>
+        <div class="prov">Prøv: trykk på skjermen for å «låse opp» lesebrettet.</div>
+        <ul>
+          <li>Et stillestående bilde bruker ikke strøm på e-blekk</li>
+          <li>Brukeren ser status uten å åpne noe</li>
+          <li>Mest ukonvensjonell: kan gi poeng for nytenkning</li>
+        </ul>
+      </section>
+
+      <!-- ===================== I ===================== -->
+      <section class="skisse">
+        <p class="bokstav">SKISSE I</p>
+        <h2>Tempo i stedet for tall</h2>
+        <p class="loser">Løser: 2 lesehest/pendler · 3 personvern (?)</p>
+        <div class="telefon">
+          <div class="skjerm">
+            <div class="app-topp"><span class="app-logo">bokro</span><span class="app-lenke">Min reservasjon</span></div>
+            <p class="boktittel">Mellom trærne</p>
+            <p class="liten">Ida Berg · nr. 3 i køen</p>
+            <p style="margin:8px 0 0">Låneren lytter i</p>
+            <div class="tempo" id="i-tempo">
+              <button data-tempo="rolig" aria-pressed="true">rolig</button>
+              <button data-tempo="jevnt" aria-pressed="false">jevnt</button>
+              <button data-tempo="raskt" aria-pressed="false">raskt</button>
+            </div>
+            <p class="liten">tempo de siste 3 dagene</p>
+            <hr class="stiplet-linje">
+            <p style="margin:0">Derfor er anslaget</p>
+            <p style="font-size:1.8rem; font-weight:bold; margin:0" id="i-anslag">10–16 dager</p>
+            <p class="liten" id="i-tekst">Hvis tempoet øker, går det fortere.</p>
+            <div class="stiplet-boks">
+              <strong>Spørsmål til gruppen:</strong><br>
+              Avslører «rolig tempo» mer om vanene til låneren enn «ca. halvveis»?
+            </div>
+          </div>
+        </div>
+        <div class="prov">Prøv: bytt tempo og se hvordan anslaget endrer seg.</div>
+        <ul>
+          <li>Forklarer hvorfor ventetiden er lang</li>
+          <li>Personvern er en gråsone, et godt dilemma til rapporten</li>
+          <li>Kan bli forkastet, og det er også et funn</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="melding" id="melding" role="status"></div>
+
+  <script src="js/felles.js"></script>
+  <script src="js/skisser.js"></script>
+</body>
+</html>

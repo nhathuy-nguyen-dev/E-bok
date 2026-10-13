@@ -1,0 +1,167 @@
+/* ============================================================
+   Felles stil for alle sidene i Bokro-prototypen
+   ============================================================ */
+
+:root {
+  --papir: #f8f8f6;
+  --bakgrunn: #e9e8e4;
+  --blekk: #1f1f1f;
+  --gra: #5c5c5c;
+  --lysgra: #dcdcdc;
+  --linje: #b5b5b5;
+  --serif: Georgia, "DejaVu Serif", "Times New Roman", serif;
+  --sans: "DejaVu Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background: var(--bakgrunn);
+  color: var(--blekk);
+  line-height: 1.4;
+}
+
+a { color: inherit; }
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---------- Toppmeny for hele nettstedet ---------- */
+.nettsted-meny {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  align-items: center;
+  padding: 14px 20px;
+  background: var(--blekk);
+  color: #fff;
+}
+.nettsted-meny .logo {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  text-decoration: none;
+  margin-right: auto;
+}
+.nettsted-meny a { text-decoration: none; opacity: 0.8; }
+.nettsted-meny a:hover,
+.nettsted-meny a[aria-current="page"] { opacity: 1; text-decoration: underline; }
+
+.innhold {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+
+.innhold h1 { margin: 0 0 6px; }
+.ingress { color: var(--gra); margin: 0 0 24px; max-width: 70ch; }
+
+/* ---------- Telefonramme ---------- */
+.telefon {
+  width: 100%;
+  max-width: 390px;
+  border: 12px solid #3a3a3a;
+  border-radius: 28px;
+  background: var(--papir);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.telefon.lys-ramme { border-color: #d3d3cf; }
+
+.skjerm {
+  padding: 20px 22px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 560px;
+}
+
+/* App-toppen («bokro    Min reservasjon») */
+.app-topp {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 2px solid var(--blekk);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+.app-topp .app-logo { font-family: var(--serif); font-weight: bold; font-size: 1.1rem; }
+.app-topp .app-lenke { font-size: 0.8rem; }
+
+.boktittel { font-family: var(--serif); font-size: 1.3rem; font-weight: normal; margin: 0; }
+.liten { font-size: 0.78rem; color: var(--gra); margin: 0; }
+
+/* ---------- Knapper ---------- */
+.knapp-mork,
+.knapp-lys {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--blekk);
+  text-align: left;
+}
+.knapp-mork { background: var(--blekk); color: #fff; }
+.knapp-lys { background: #fff; }
+.knapp-mork:hover { background: #000; }
+.knapp-lys:hover { background: #f0f0f0; }
+
+/* Bekreftelse som dukker opp kort nederst («toast») */
+.melding {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(150%);
+  background: var(--blekk);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 6px;
+  max-width: calc(100% - 32px);
+  transition: transform 0.25s ease;
+  z-index: 100;
+}
+.melding.vis { transform: translateX(-50%) translateY(0); }
+
+/* ---------- Bryter mellom situasjoner ---------- */
+.situasjoner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.situasjoner button {
+  padding: 8px 14px;
+  border: 2px solid var(--blekk);
+  background: #fff;
+  border-radius: 999px;
+}
+.situasjoner button[aria-pressed="true"] { background: var(--blekk); color: #fff; }
+
+/* Telefon + forklaring ved siden av hverandre */
+.side-om-side {
+  display: grid;
+  grid-template-columns: minmax(0, 390px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+.forklaring {
+  background: #fff;
+  padding: 18px 20px;
+  border-radius: 8px;
+}
+.forklaring h2 { margin-top: 0; font-size: 1.1rem; }
+.forklaring img { width: 100%; max-width: 260px; border: 1px solid var(--linje); }
+
+@media (max-width: 760px) {
+  .side-om-side { grid-template-columns: 1fr; }
+}
+
+/* Skjult element (brukes av JavaScript) */
+[hidden] { display: none !important; }

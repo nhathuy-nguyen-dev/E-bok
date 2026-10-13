@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bokro – versjon 1</title>
+  <link rel="stylesheet" href="css/felles.css">
+  <style>
+    /* Stil som bare gjelder versjon 1 */
+    .v1 .app-topp { border-bottom: 1px solid var(--linje); margin: -20px -22px 20px; padding: 18px 22px 12px; }
+    .v1 .app-logo { font-weight: normal; font-size: 1.6rem; }
+    .v1 .app-lenke { color: var(--gra); }
+
+    .bokhode { display: flex; gap: 16px; align-items: center; margin-bottom: 20px; }
+    .omslag {
+      width: 76px; height: 102px; flex-shrink: 0;
+      background: #ededeb; border-left: 4px solid var(--blekk);
+      font-family: var(--serif); font-size: 0.62rem; letter-spacing: 0.05em;
+      padding: 10px 8px; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .omslag hr { border: 0; border-top: 1px solid var(--linje); width: 70%; margin: 0; }
+    .format { font-size: 0.7rem; letter-spacing: 0.15em; color: var(--gra); margin: 0; }
+    .v1 .boktittel { font-size: 1.6rem; }
+    .forfatter { color: var(--gra); margin: 2px 0 0; }
+
+    .statusrad { display: flex; justify-content: space-between; align-items: center; }
+    .merke { background: var(--blekk); color: #fff; padding: 4px 10px; font-size: 0.9rem; }
+    .stor-tid { font-size: 2.6rem; margin: 0 0 6px; line-height: 1.1; }
+    .ledetekst { color: var(--gra); margin: 14px 0 4px; }
+
+    .endret-boks {
+      background: #ededeb; border-left: 4px solid var(--blekk);
+      padding: 10px 12px; margin: 14px 0 4px; font-size: 0.92rem;
+    }
+    .endret-boks p { margin: 0; }
+    .endret-boks p + p { margin-top: 4px; }
+
+    .skille { border: 0; border-top: 1px solid var(--linje); margin: 18px 0; width: 100%; }
+
+    .i-bruk { display: flex; justify-content: space-between; align-items: baseline; }
+    .i-bruk h3 { margin: 0; font-weight: normal; font-size: 1.15rem; }
+
+    /* Fremdriftslinje: heltrukket = sikkert lyttet, skravert = kanskje lyttet */
+    .linje { position: relative; height: 14px; background: #ededeb; margin: 10px 0 6px; }
+    .linje .sikker, .linje .kanskje { position: absolute; top: 0; bottom: 0; transition: all 0.4s ease; }
+    .linje .sikker { left: 0; background: var(--blekk); }
+    .linje .kanskje {
+      background: repeating-linear-gradient(-45deg, var(--blekk) 0 2px, transparent 2px 6px);
+    }
+
+    .lenke-knapp {
+      background: none; border: 0; padding: 0; margin: 14px 0 18px;
+      text-decoration: underline; text-underline-offset: 4px; align-self: flex-start;
+    }
+
+    .trekkspill { border: 1px solid var(--linje); border-radius: 4px; background: #fff; margin-bottom: 12px; }
+    .trekkspill summary {
+      list-style: none; padding: 12px 14px; display: flex; justify-content: space-between; cursor: pointer;
+    }
+    .trekkspill summary::-webkit-details-marker { display: none; }
+    .trekkspill summary::after { content: "+"; font-size: 1.2rem; line-height: 1; }
+    .trekkspill[open] summary::after { content: "–"; }
+    .trekkspill .tekst { padding: 0 14px 12px; font-size: 0.9rem; color: var(--gra); }
+
+    .v1 .knapp-mork { justify-content: center; border-radius: 4px; padding: 12px; }
+    .v1 .knapp-mork.aktiv { background: #fff; color: var(--blekk); }
+
+    .bunn { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+    .bunn .knapp-lys { width: auto; border: 1px solid var(--linje); border-radius: 4px; padding: 8px 12px; }
+
+    /* Panel som legger seg over skjermen («Se køen din») */
+    .panel {
+      position: absolute; inset: 0; background: var(--papir);
+      padding: 20px 22px; overflow-y: auto; z-index: 5;
+    }
+    .panel .tilbake { background: none; border: 0; padding: 0; margin-bottom: 14px; }
+    .ko-liste { list-style: none; padding: 0; margin: 0; }
+    .ko-liste li {
+      display: flex; justify-content: space-between; gap: 10px;
+      padding: 12px 0; border-bottom: 1px solid var(--lysgra);
+    }
+    .ko-liste li.deg { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <nav class="nettsted-meny">
+    <a class="logo" href="index.html">bokro</a>
+    <a href="index.html">Oversikt</a>
+    <a href="skisser.html">Skisse A–I</a>
+    <a href="versjon1.html" aria-current="page">Versjon 1</a>
+    <a href="versjon2.html">Versjon 2</a>
+  </nav>
+
+  <main class="innhold">
+    <h1>Versjon 1</h1>
+    <p class="ingress">Velg en situasjon. Alt på telefonen kan trykkes på.</p>
+
+    <div class="situasjoner" id="situasjoner">
+      <button data-situasjon="normal" aria-pressed="true">Normal venting</button>
+      <button data-situasjon="forlenget" aria-pressed="false">Forlenget lån</button>
+      <button data-situasjon="usikker" aria-pressed="false">Usikkert anslag</button>
+    </div>
+
+    <div class="side-om-side">
+      <div class="telefon lys-ramme v1">
+        <div class="skjerm">
+          <div class="app-topp">
+            <span class="app-logo">Bokro</span>
+            <span class="app-lenke">Mine reservasjoner</span>
+          </div>
+
+          <div class="bokhode">
+            <div class="omslag">
+              <span>MELLOM<br>TRÆRNE</span>
+              <hr>
+              <span>IDA BERG</span>
+            </div>
+            <div>
+              <p class="format">LYDBOK</p>
+              <h2 class="boktittel">Mellom trærne</h2>
+              <p class="forfatter">Ida Berg</p>
+            </div>
+          </div>
+
+          <div class="statusrad">
+            <span id="statustittel">Reservasjonen din</span>
+            <span class="merke" id="plass">Nr. 3 i køen</span>
+          </div>
+
+          <p class="ledetekst">Anslått ventetid</p>
+          <p class="stor-tid" id="ventetid">8–14 dager</p>
+          <p style="margin:0" id="undertekst">Du får beskjed når boken er klar.</p>
+
+          <div class="endret-boks" id="endret" hidden>
+            <p>Ventetiden er endret</p>
+            <p>Forrige anslag var rundt 30 minutter. Lånet er forlenget. Du er fortsatt først i køen.</p>
+          </div>
+
+          <hr class="skille">
+
+          <div class="i-bruk">
+            <h3>Boken er i bruk</h3>
+            <span class="liten">1 eksemplar</span>
+          </div>
+          <p style="margin:10px 0 0" id="lyttet">Nåværende lån: omtrent 50–75 % lyttet</p>
+          <div class="linje" role="img" id="linje" aria-label="Fremdrift">
+            <div class="sikker" id="linje-sikker"></div>
+            <div class="kanskje" id="linje-kanskje"></div>
+          </div>
+          <p class="liten">Grov fremdrift · Oppdateres trinnvis</p>
+
+          <button class="lenke-knapp" id="se-ko">Se køen din</button>
+
+          <details class="trekkspill">
+            <summary>Hvordan beregnes ventetiden?</summary>
+            <div class="tekst">
+              Vi ser på hvor langt den som låner boken har kommet, og hvor fort
+              folk vanligvis lytter. Hvert lån varer i maks 21 dager. Hvis
+              låneren slutter å lytte, eller lånet blir forlenget, endrer vi anslaget.
+            </div>
+          </details>
+
+          <button class="knapp-mork" id="varsle">Varsle meg når boken er klar</button>
+
+          <div class="bunn">
+            <span class="liten" id="tidspunkt">Sist oppdatert kl. 18.40</span>
+            <button class="knapp-lys" id="oppdater">Oppdater</button>
+          </div>
+        </div>
+
+        <!-- Panelet som vises når man trykker «Se køen din» -->
+        <div class="panel" id="ko-panel" hidden>
+          <button class="tilbake" id="lukk-ko">‹ Tilbake</button>
+          <h2 class="boktittel">Køen din</h2>
+          <p class="liten" style="margin-bottom:12px">Mellom trærne · 1 eksemplar</p>
+          <ul class="ko-liste" id="ko-liste"></ul>
+          <p class="liten" style="margin-top:14px">Navn vises ikke, av hensyn til personvern.</p>
+        </div>
+      </div>
+
+      <aside class="forklaring">
+        <h2>Hva viser denne situasjonen?</h2>
+        <p id="forklaring-tekst"></p>
+        <p class="liten">Originalskissen:</p>
+        <img id="original" src="bilder/v1-normal-venting.png" alt="Originalskisse">
+      </aside>
+    </div>
+  </main>
+
+  <div class="melding" id="melding" role="status"></div>
+
+  <script src="js/felles.js"></script>
+  <script src="js/versjon1.js"></script>
+</body>
+</html>

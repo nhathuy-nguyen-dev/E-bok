@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bokro – versjon 2</title>
+  <link rel="stylesheet" href="css/felles.css">
+  <style>
+    /* Versjon 2: ren svart/hvit med høy kontrast (laget for e-blekk) */
+    .v2 { background: #fff; }
+    .v2 .skjerm { background: #fff; }
+    .v2 .app-topp { margin: -20px -22px 18px; padding: 18px 22px 12px; border-bottom-width: 3px; }
+    .v2 .app-logo { font-weight: normal; font-size: 1.6rem; }
+    .v2 .app-lenke { font-size: 0.9rem; }
+
+    .format { font-size: 0.8rem; margin: 0; }
+    .v2 .boktittel { font-size: 1.8rem; margin: 2px 0; }
+    .forfatter { margin: 0; font-size: 1.05rem; }
+
+    .skille { border: 0; border-top: 1px solid #999; margin: 18px 0; width: 100%; }
+
+    .status { font-size: 1.15rem; margin: 0 0 12px; }
+    .ledetekst { font-size: 0.85rem; margin: 0; color: #333; }
+    .stor-tid { font-size: 2.7rem; margin: 0 0 6px; line-height: 1.1; }
+
+    .sitat { border-left: 4px solid #111; padding-left: 12px; margin-top: 10px; }
+    .sitat p { margin: 0 0 4px; }
+
+    /* Fire firkanter i stedet for en glidende linje: trinnvis fremdrift */
+    .trinn { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0 8px; }
+    .trinn span { height: 16px; background: var(--lysgra); transition: background 0.3s; }
+    .trinn span.fylt { background: #111; }
+
+    .knapper { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+    .v2 .knapp-lys, .v2 .knapp-mork { padding: 12px 14px; font-size: 1.05rem; }
+
+    .bunn { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+    .bunn .knapp-lys { width: auto; padding: 8px 12px; }
+
+    .fot {
+      background: #3a3a3a; color: #fff; text-align: center;
+      letter-spacing: 0.25em; font-size: 0.75rem; padding: 10px 0 0;
+    }
+
+    .panel {
+      position: absolute; inset: 0 0 34px; background: #fff;
+      padding: 20px 22px; overflow-y: auto; z-index: 5;
+    }
+    .panel .tilbake { background: none; border: 0; padding: 0; margin-bottom: 14px; font-size: 1rem; }
+    .panel h2 { margin: 0 0 12px; }
+    .rad { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--lysgra); }
+    .rad.deg { font-weight: bold; }
+
+    .skjema label { display: block; margin: 14px 0 4px; }
+    .skjema input[type="email"] {
+      width: 100%; padding: 10px; font: inherit; border: 2px solid #111;
+    }
+    .skjema .valg { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+    .skjema .feil { color: #b00020; font-size: 0.85rem; margin: 6px 0 0; }
+  </style>
+</head>
+<body>
+  <nav class="nettsted-meny">
+    <a class="logo" href="index.html">bokro</a>
+    <a href="index.html">Oversikt</a>
+    <a href="skisser.html">Skisse A–I</a>
+    <a href="versjon1.html">Versjon 1</a>
+    <a href="versjon2.html" aria-current="page">Versjon 2</a>
+  </nav>
+
+  <main class="innhold">
+    <h1>Versjon 2</h1>
+    <p class="ingress">Velg en situasjon. Prøv knappene på telefonen.</p>
+
+    <div class="situasjoner" id="situasjoner">
+      <button data-situasjon="normal" aria-pressed="true">Normal venting</button>
+      <button data-situasjon="forlenget" aria-pressed="false">Forlenget lån</button>
+      <button data-situasjon="usikker" aria-pressed="false">Usikkert anslag</button>
+    </div>
+
+    <div class="side-om-side">
+      <div class="telefon v2">
+        <div class="skjerm">
+          <div class="app-topp">
+            <span class="app-logo">bokro</span>
+            <span class="app-lenke">Min reservasjon</span>
+          </div>
+
+          <p class="format">LYDBOK</p>
+          <h2 class="boktittel">Mellom trærne</h2>
+          <p class="forfatter">Ida Berg</p>
+
+          <hr class="skille">
+
+          <p class="status" id="status">Du er nummer 3 i køen</p>
+          <p class="ledetekst">Anslått ventetid</p>
+          <p class="stor-tid" id="ventetid">8–14 dager</p>
+          <p style="margin:0" id="undertekst">Tidsrommet kan endre seg.</p>
+
+          <div class="sitat" id="sitat" hidden>
+            <p>Forrige anslag: rundt 30 minutter.</p>
+            <p>Lånet er forlenget. Du er fortsatt først i køen.</p>
+          </div>
+
+          <hr class="skille">
+
+          <p class="status" style="margin:0">Nåværende lån</p>
+          <div class="trinn" id="trinn" role="img">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <p style="margin:0" id="lyttet">Omtrent halvveis lyttet</p>
+          <p class="liten">Vises i grove trinn · 1 eksemplar i bruk</p>
+
+          <div class="knapper">
+            <button class="knapp-lys" data-panel="panel-ko">Se kødetaljer <span>›</span></button>
+            <button class="knapp-lys" data-panel="panel-anslag">Om tidsanslaget <span>›</span></button>
+            <button class="knapp-mork" data-panel="panel-epost" id="epost-knapp">Varsling på e-post <span>›</span></button>
+          </div>
+
+          <div class="bunn">
+            <span class="liten" id="tidspunkt">Sist oppdatert kl. 18.40</span>
+            <button class="knapp-lys" id="oppdater">Oppdater</button>
+          </div>
+        </div>
+        <div class="fot">BOKRO · BIBLIOTEK<div style="height:10px"></div></div>
+
+        <!-- Undersider. Bare én vises om gangen. -->
+        <div class="panel" id="panel-ko" hidden>
+          <button class="tilbake">‹ Tilbake</button>
+          <h2>Kødetaljer</h2>
+          <div id="ko-rader"></div>
+          <p class="liten" style="margin-top:12px">Biblioteket har 1 eksemplar av denne lydboken.</p>
+        </div>
+
+        <div class="panel" id="panel-anslag" hidden>
+          <button class="tilbake">‹ Tilbake</button>
+          <h2>Om tidsanslaget</h2>
+          <p>Anslaget bygger på tre ting:</p>
+          <ol>
+            <li>Hvor mange som står foran deg i køen.</li>
+            <li>Hvor langt den som låner nå har kommet.</li>
+            <li>Hvor fort folk vanligvis lytter ferdig.</li>
+          </ol>
+          <p>Vi viser et <strong>tidsrom</strong> og ikke en dato, fordi vi ikke vet sikkert når
+            noen lytter ferdig. Når vi vet lite, blir tidsrommet bredere.</p>
+          <p class="liten">Fremdriften vises i fire grove trinn for å beskytte personvernet til låneren.</p>
+        </div>
+
+        <div class="panel" id="panel-epost" hidden>
+          <button class="tilbake">‹ Tilbake</button>
+          <h2>Varsling på e-post</h2>
+          <form class="skjema" id="epost-skjema" novalidate>
+            <label for="epost">E-postadresse</label>
+            <input type="email" id="epost" placeholder="navn@eksempel.no" autocomplete="email">
+            <p class="feil" id="epost-feil" hidden>Skriv inn en gyldig e-postadresse.</p>
+
+            <div class="valg">
+              <input type="checkbox" id="endringer" checked>
+              <label for="endringer" style="margin:0">Si også fra når ventetiden endrer seg</label>
+            </div>
+
+            <button class="knapp-mork" type="submit" style="margin-top:18px; justify-content:center">Slå på varsling</button>
+          </form>
+          <div id="epost-ferdig" hidden>
+            <p>✓ Varsling er slått på for <strong id="epost-vis"></strong>.</p>
+            <button class="knapp-lys" id="epost-av" style="justify-content:center">Slå av varsling</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="forklaring">
+        <h2>Hva viser denne situasjonen?</h2>
+        <p id="forklaring-tekst"></p>
+        <p class="liten">Originalskissen:</p>
+        <img id="original" src="bilder/v2-normal-venting.png" alt="Originalskisse">
+      </aside>
+    </div>
+  </main>
+
+  <div class="melding" id="melding" role="status"></div>
+
+  <script src="js/felles.js"></script>
+  <script src="js/versjon2.js"></script>
+</body>
+</html>
